@@ -1,0 +1,11 @@
+node_modules/
+.env
+dist/
+drafts/pending/*
+drafts/approved/*
+logs/*.log
+documents/uploads/*
+.DS_Store
+*.swp
+.vercel
+.astro

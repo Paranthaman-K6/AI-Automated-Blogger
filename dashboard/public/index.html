@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Automated Blogger Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>Automated Blogger</h1>
+      <div class="status-indicator">
+        <span class="status-dot" id="statusDot"></span>
+        <span id="statusText">Connecting...</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="quota-widget">
+      <h2>Vercel Quota</h2>
+      <div class="quota-info">
+        <span id="quotaUsed">0</span> / <span id="quotaLimit">100</span> deploys today
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="quotaProgress"></div>
+      </div>
+      <div class="quota-remaining">
+        <span id="quotaRemaining">100</span> remaining
+      </div>
+    </div>
+
+    <div class="batch-panel">
+      <h2>Batch Publishing</h2>
+      <div class="batch-info">
+        <div class="staged-count">
+          <strong id="stagedCount">0</strong> draft(s) staged
+        </div>
+        <div class="batch-actions">
+          <button class="btn btn-secondary" onclick="previewBatch()">Preview Locally</button>
+          <button class="btn btn-primary" id="publishBtn" onclick="publishBatch()">Publish Batch</button>
+        </div>
+      </div>
+    </div>
+
+    <section class="drafts-section">
+      <h2>Pending Drafts</h2>
+      <div id="pendingDrafts" class="drafts-grid"></div>
+    </section>
+
+    <section class="drafts-section">
+      <h2>Approved / Staged</h2>
+      <div id="approvedDrafts" class="drafts-list"></div>
+    </section>
+
+    <section class="drafts-section">
+      <h2>Deployment History</h2>
+      <div id="publishLog" class="publish-log"></div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
