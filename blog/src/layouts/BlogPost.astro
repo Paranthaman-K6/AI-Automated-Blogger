@@ -1,0 +1,95 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import AffiliateDisclosure from '../components/AffiliateDisclosure.astro';
+import NewsletterCTA from '../components/NewsletterCTA.astro';
+import RelatedPosts from '../components/RelatedPosts.astro';
+import TableOfContents from '../components/TableOfContents.astro';
+import { tagSlug } from '../utils/tags';
+import type { CollectionEntry } from 'astro:content';
+
+interface TocHeading { depth: number; slug: string; text: string; }
+interface Props {
+  post: CollectionEntry<'blog'>;
+  related?: CollectionEntry<'blog'>[];
+  readingTime?: number;
+  headings?: TocHeading[];
+}
+
+const { post, related = [], readingTime, headings = [] } = Astro.props;
+const { title, description, pubDate, author, tags, affiliateLinks, sources } = post.data;
+const formattedDate = new Intl.DateTimeFormat('en-US', { dateStyle: 'long' }).format(pubDate);
+const tocHeadings = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
+const hasToc = tocHeadings.length > 1;
+---
+
+<BaseLayout title={title} description={description}>
+  <div class="post-layout" class:list={{ 'has-toc': hasToc }}>
+    {hasToc && (<aside class="sidebar sidebar-left"><div class="sidebar-sticky"><TableOfContents headings={tocHeadings} /></div></aside>)}
+    <article class="blog-post">
+      <header class="post-header">
+        <div class="post-meta">
+          <time datetime={pubDate.toISOString()}>{formattedDate}</time><span class="meta-sep">&bull;</span><span class="author">By {author}</span>
+          {readingTime && (<><span class="meta-sep">&bull;</span><span>{readingTime} min read</span></>)}
+        </div>
+        <h1 class="post-title">{title}</h1>
+        {tags && tags.length > 0 && (<div class="tags-container">{tags.map((tag) => (<a class="tag tag-link" href={`/tags/${tagSlug(tag)}`}>#{tag}</a>))}</div>)}
+      </header>
+      <AffiliateDisclosure affiliateLinks={affiliateLinks} />
+      <div class="post-content"><slot /></div>
+      {sources && sources.length > 0 && (<section class="sources-section"><h3>References & Sources</h3><ul>{sources.map((source) => (<li><a href={source.url} target="_blank" rel="noopener noreferrer">{source.title}</a></li>))}</ul></section>)}
+    </article>
+    <aside class="sidebar sidebar-right"><div class="sidebar-sticky"><RelatedPosts posts={related} /><NewsletterCTA title="Stay in the loop" description="Get new posts delivered to your inbox. No spam, unsubscribe anytime." /></div></aside>
+  </div>
+</BaseLayout>
+
+<style>
+  .post-layout { display: grid; grid-template-columns: 1fr; gap: 2rem; align-items: start; }
+  .sidebar-sticky { position: sticky; top: calc(4rem + 1.5rem); max-height: calc(100vh - 4rem - 3rem); overflow-y: auto; scrollbar-width: thin; scrollbar-color: #e2e8f0 transparent; }
+  .sidebar-sticky::-webkit-scrollbar { width: 4px; }
+  .sidebar-sticky::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 2px; }
+  .blog-post { min-width: 0; }
+  .post-header { margin-bottom: 2rem; }
+  .post-meta { font-size: 0.875rem; color: #64748b; margin-bottom: 0.5rem; }
+  .meta-sep { margin: 0 0.5rem; }
+  .post-title { font-size: 2.25rem; line-height: 1.25; font-weight: 800; color: #0f172a; margin: 0.5rem 0 1rem; }
+  .tags-container { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem; }
+  .post-content { font-size: 1.125rem; line-height: 1.8; color: #334155; }
+  .post-content :global(h2) { font-size: 1.75rem; font-weight: 700; color: #0f172a; margin-top: 2.5rem; margin-bottom: 1rem; scroll-margin-top: calc(4rem + 1rem); }
+  .post-content :global(h3) { font-size: 1.35rem; font-weight: 600; color: #0f172a; margin-top: 2rem; margin-bottom: 0.75rem; scroll-margin-top: calc(4rem + 1rem); }
+  .post-content :global(h4) { font-size: 1.15rem; font-weight: 600; color: #0f172a; margin-top: 1.5rem; margin-bottom: 0.5rem; scroll-margin-top: calc(4rem + 1rem); }
+  .post-content :global(p) { margin: 1.25rem 0; }
+  .post-content :global(ul), .post-content :global(ol) { padding-left: 1.5rem; margin: 1.25rem 0; }
+  .post-content :global(li) { margin: 0.5rem 0; }
+  .post-content :global(a) { color: #2563eb; text-decoration: none; border-bottom: 1px solid #bfdbfe; }
+  .post-content :global(a:hover) { color: #1d4ed8; border-bottom-color: #1d4ed8; }
+  .post-content :global(code) { background: #f1f5f9; padding: 0.2rem 0.4rem; border-radius: 0.25rem; font-size: 0.9em; font-family: monospace; }
+  .post-content :global(pre) { background: #0f172a; color: #e2e8f0; padding: 1.25rem 1.5rem; border-radius: 0.5rem; overflow-x: auto; margin: 1.5rem 0; }
+  .post-content :global(pre code) { background: transparent; padding: 0; color: inherit; }
+  .post-content :global(blockquote) { border-left: 4px solid #6366f1; margin: 1.5rem 0; padding: 0.5rem 0 0.5rem 1.5rem; color: #475569; font-style: italic; background: #f8fafc; border-radius: 0 0.5rem 0.5rem 0; }
+  .post-content :global(img) { max-width: 100%; border-radius: 0.5rem; height: auto; }
+  .post-content :global(table) { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.95rem; }
+  .post-content :global(th), .post-content :global(td) { border: 1px solid #e2e8f0; padding: 0.6rem 0.9rem; text-align: left; }
+  .post-content :global(th) { background: #f8fafc; font-weight: 600; color: #0f172a; }
+  .post-content :global(hr) { border: none; border-top: 1px solid #e2e8f0; margin: 2.5rem 0; }
+  .sources-section { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid #e2e8f0; }
+  .sources-section h3 { font-size: 1.125rem; font-weight: 700; margin-bottom: 0.75rem; color: #0f172a; }
+  .sources-section ul { list-style-type: disc; padding-left: 1.25rem; }
+  .sources-section a { color: #2563eb; text-decoration: none; }
+  .sources-section a:hover { text-decoration: underline; }
+  .sidebar-right .sidebar-sticky { display: flex; flex-direction: column; gap: 1.5rem; }
+  @media (min-width: 768px) {
+    .post-layout.has-toc { grid-template-columns: var(--sidebar-l) 1fr; grid-template-areas: 'toc content'; }
+    .sidebar-left { grid-area: toc; } .blog-post { grid-area: content; } .sidebar-right { display: none; }
+    .post-layout:not(.has-toc) { grid-template-columns: 1fr; }
+  }
+  @media (min-width: 1100px) {
+    .post-layout.has-toc { grid-template-columns: var(--sidebar-l) 1fr var(--sidebar-r); grid-template-areas: 'toc content right'; }
+    .post-layout:not(.has-toc) { grid-template-columns: 1fr var(--sidebar-r); grid-template-areas: 'content right'; }
+    .sidebar-right { display: block !important; }
+  }
+  @media (max-width: 767px) {
+    .post-layout { grid-template-columns: 1fr; }
+    .sidebar-left, .sidebar-right { display: none; }
+    .post-title { font-size: 1.75rem; } .post-content { font-size: 1rem; }
+  }
+</style>
