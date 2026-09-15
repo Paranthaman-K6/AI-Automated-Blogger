@@ -1,0 +1,48 @@
+---
+interface AffiliateLink {
+  product: string;
+  url: string;
+}
+
+interface Props {
+  affiliateLinks?: AffiliateLink[];
+}
+
+const { affiliateLinks } = Astro.props;
+---
+
+{
+  affiliateLinks && affiliateLinks.length > 0 && (
+    <aside class="affiliate-disclosure">
+      <div class="disclosure-badge">Disclosure</div>
+      <p>
+        This post contains affiliate links for products including{' '}
+        <strong>{affiliateLinks.map((l) => l.product).join(', ')}</strong>. If you make a purchase through these links, we may earn a commission at no additional cost to you.
+      </p>
+    </aside>
+  )
+}
+
+<style>
+  .affiliate-disclosure {
+    background-color: #f8fafc;
+    border-left: 4px solid #3b82f6;
+    padding: 1rem 1.25rem;
+    margin: 1.5rem 0;
+    border-radius: 0 0.5rem 0.5rem 0;
+    font-size: 0.875rem;
+    color: #475569;
+  }
+  .disclosure-badge {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #2563eb;
+    margin-bottom: 0.25rem;
+  }
+  .affiliate-disclosure p {
+    margin: 0;
+    line-height: 1.5;
+  }
+</style>
