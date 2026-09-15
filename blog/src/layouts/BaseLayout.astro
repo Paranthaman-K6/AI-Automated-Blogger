@@ -1,0 +1,55 @@
+---
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = 'Automated Blogger - Fast, modern technical blog.' } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="header-inner">
+        <a href="/" class="site-title">Automated Blogger</a>
+        <nav class="site-nav">
+          <a href="/">Home</a>
+          <a href="/tags">Tags</a>
+        </nav>
+      </div>
+    </header>
+    <main class="main-wrapper">
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <p>&copy; {new Date().getFullYear()} Automated Blogger. Built with Astro.</p>
+      </div>
+    </footer>
+  </body>
+</html>
+
+<style is:global>
+  *, *::before, *::after { box-sizing: border-box; }
+  :root { --max-w: 1400px; --gap: 1.5rem; --sidebar-l: 220px; --sidebar-r: 240px; --header-h: 4rem; }
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; color: #1e293b; background-color: #ffffff; line-height: 1.6; display: flex; flex-direction: column; min-height: 100vh; }
+  .header-inner { width: 100%; max-width: var(--max-w); margin: 0 auto; padding: 0 var(--gap); display: flex; justify-content: space-between; align-items: center; height: var(--header-h); }
+  .site-header { border-bottom: 1px solid #e2e8f0; background-color: #ffffff; position: sticky; top: 0; z-index: 10; }
+  .site-title { font-size: 1.25rem; font-weight: 700; color: #0f172a; text-decoration: none; }
+  .site-nav a { color: #64748b; text-decoration: none; font-weight: 500; margin-left: 1.25rem; }
+  .site-nav a:hover { color: #0f172a; }
+  .main-wrapper { flex: 1; width: 100%; max-width: var(--max-w); margin: 0 auto; padding: 2.5rem var(--gap) 3.5rem; }
+  .site-footer { border-top: 1px solid #e2e8f0; padding: 2rem 0; background-color: #f8fafc; color: #64748b; font-size: 0.875rem; text-align: center; }
+  .footer-inner { max-width: var(--max-w); margin: 0 auto; padding: 0 var(--gap); }
+  .tag { background-color: #f1f5f9; color: #475569; font-size: 0.75rem; font-weight: 600; padding: 0.2rem 0.6rem; border-radius: 9999px; display: inline-block; }
+  .tag-link { text-decoration: none; }
+  .tag-link:hover { background-color: #e0e7ff; color: #4f46e5; }
+</style>
