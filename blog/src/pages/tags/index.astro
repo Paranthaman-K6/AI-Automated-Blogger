@@ -1,0 +1,63 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import { collectTags } from '../../utils/tags';
+
+const posts = await getCollection('blog');
+const tags = collectTags(posts);
+---
+
+<BaseLayout title="All Tags" description="Browse posts by tag">
+  <section class="tags-page">
+    <h1>Browse by Tag</h1>
+    <p class="tags-sub">{posts.length} post{posts.length === 1 ? '' : 's'} across {tags.length} tag{tags.length === 1 ? '' : 's'}</p>
+    <div class="tags-cloud">
+      {tags.map(({ tag, slug, count }) => (
+        <a class="tag-chip" href={`/tags/${slug}`}>
+          #{tag} <span class="tag-count">{count}</span>
+        </a>
+      ))}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .tags-page {
+    padding: 1rem 0 2rem;
+  }
+  .tags-page h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 0.25rem;
+  }
+  .tags-sub {
+    color: #64748b;
+    margin-bottom: 1.5rem;
+  }
+  .tags-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  .tag-chip {
+    background: #f1f5f9;
+    color: #475569;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    text-decoration: none;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .tag-chip:hover {
+    background: #e0e7ff;
+    color: #4f46e5;
+  }
+  .tag-count {
+    background: #e2e8f0;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    padding: 0.1rem 0.5rem;
+    margin-left: 0.25rem;
+  }
+</style>

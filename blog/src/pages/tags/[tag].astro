@@ -1,0 +1,107 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import { collectTags, tagSlug } from '../../utils/tags';
+import { getReadingTime } from '../../utils/reading-time';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return collectTags(posts).map(({ tag, slug }) => ({
+    params: { tag: slug },
+    props: {
+      tag,
+      posts: posts
+        .filter((p) => (p.data.tags ?? []).some((t) => tagSlug(t) === slug))
+        .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()),
+    },
+  }));
+}
+
+const { tag, posts } = Astro.props;
+---
+
+<BaseLayout title={`Posts tagged "${tag}"`} description={`All posts tagged ${tag}`}>
+  <section class="tag-page">
+    <p class="tag-crumb"><a href="/tags">All tags</a></p>
+    <h1>#{tag}</h1>
+    <p class="tag-sub">{posts.length} post{posts.length === 1 ? '' : 's'}</p>
+    <div class="tag-posts">
+      {posts.map((post) => (
+        <article class="post-preview">
+          <a href={`/blog/${post.slug}`}>
+            <h2 class="post-title">{post.data.title}</h2>
+            <p class="post-description">{post.data.description}</p>
+            <div class="post-meta">
+              <time datetime={post.data.pubDate.toISOString()}>
+                {new Intl.DateTimeFormat('en-US', { dateStyle: 'medium' }).format(post.data.pubDate)}
+              </time>
+              <span>&bull;</span>
+              <span>{getReadingTime(post.body)} min read</span>
+            </div>
+          </a>
+        </article>
+      ))}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .tag-page {
+    padding: 1rem 0 2rem;
+  }
+  .tag-crumb a {
+    color: #64748b;
+    text-decoration: none;
+    font-size: 0.875rem;
+  }
+  .tag-crumb a:hover {
+    color: #4f46e5;
+  }
+  .tag-page h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0.25rem 0;
+  }
+  .tag-sub {
+    color: #64748b;
+    margin-bottom: 1.5rem;
+  }
+  .tag-posts {
+    display: grid;
+    gap: 1.25rem;
+  }
+  .post-preview {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .post-preview:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+  .post-preview a {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    padding: 1.25rem 1.5rem;
+  }
+  .post-title {
+    font-size: 1.35rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
+    color: #0f172a;
+  }
+  .post-description {
+    color: #475569;
+    font-size: 0.95rem;
+    margin: 0 0 0.75rem 0;
+  }
+  .post-meta {
+    display: flex;
+    gap: 0.75rem;
+    font-size: 0.875rem;
+    color: #64748b;
+  }
+</style>
