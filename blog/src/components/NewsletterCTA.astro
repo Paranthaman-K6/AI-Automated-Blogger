@@ -1,0 +1,15 @@
+---
+interface Props { title?: string; description?: string; }
+const { title = 'Stay in the loop', description = 'Get new posts delivered to your inbox.' } = Astro.props;
+---
+<div class="newsletter-cta"><h3>{title}</h3><p>{description}</p><form class="newsletter-form" onsubmit="event.preventDefault();"><input type="email" placeholder="you@example.com" required aria-label="Email address" /><button type="submit">Subscribe</button></form></div>
+<style>
+  .newsletter-cta { background: linear-gradient(135deg, #1e293b, #0f172a); color: #f8fafc; padding: 1.25rem; border-radius: 0.75rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); }
+  .newsletter-cta h3 { margin: 0 0 0.4rem; font-size: 1.1rem; font-weight: 700; color: #ffffff; }
+  .newsletter-cta p { margin: 0 0 1rem; color: #94a3b8; font-size: 0.85rem; line-height: 1.5; }
+  .newsletter-form { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .newsletter-form input { flex: 1; min-width: 160px; padding: 0.6rem 0.85rem; border-radius: 0.375rem; border: 1px solid #334155; background: #0f172a; color: #f8fafc; font-size: 0.875rem; outline: none; }
+  .newsletter-form input:focus { border-color: #3b82f6; }
+  .newsletter-form button { padding: 0.6rem 1.25rem; border-radius: 0.375rem; border: none; background: #3b82f6; color: #ffffff; font-weight: 600; cursor: pointer; font-size: 0.875rem; }
+  .newsletter-form button:hover { background: #2563eb; }
+</style>
